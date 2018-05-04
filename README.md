@@ -6,6 +6,20 @@ use DiffUtils in android.support.v7.util
     smart refresh data
     and so on 
 this work will be update to build project simplily
+```
+allprojects {
+		 repositories {
+			 ...
+			 maven { url 'https://jitpack.io' }
+		}
+}
+```
+ Step 2. Add the dependency
+```
+dependencies {
+	        implementation 'com.github.woaigmz:SmartDiffAdapter:v0.1.0'
+	}
+```
 just like this 👇
 your RecyclerView adapter:
 ```
