@@ -5,7 +5,7 @@ import android.util.SparseIntArray;
 
 import java.util.List;
 
-import static com.woaiqw.adapter.baseMultiItemAdapter.TYPE_NOT_FOUND;
+import static com.woaiqw.adapter.BaseMultiItemAdapter.TYPE_NOT_FOUND;
 
 /**
  * Created by haoran on 2018/5/4.
