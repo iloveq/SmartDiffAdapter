@@ -1,11 +1,9 @@
 package com.woaiqw.adapter;
 
-import android.os.Bundle;
 import android.support.annotation.IntRange;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +17,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by haoran on 2018/5/3.
@@ -106,31 +97,12 @@ public abstract class BaseSmartAdapter<T, K extends BaseViewHolder> extends Recy
         convert(holder, getItem(position));
     }
 
-    /**
-     * for local refresh
-     *
-     * @param holder
-     * @param position
-     * @param payloads
-     */
-    @Override
-    public void onBindViewHolder(K holder, int position, List<Object> payloads) {
-        if (payloads == null || payloads.isEmpty()) {
-            onBindViewHolder(holder, position);
-        } else {
-            Bundle payload = (Bundle) payloads.get(0);
-            convert(holder, payload);
-        }
-    }
-
     @Override
     public int getItemCount() {
         return mData != null ? mData.size() : 0;
     }
 
     protected abstract void convert(K helper, T item);
-
-    protected abstract void convert(K helper, Bundle payload);
 
 
     protected View getItemView(@LayoutRes int layoutResId, ViewGroup parent) {
@@ -255,12 +227,6 @@ public abstract class BaseSmartAdapter<T, K extends BaseViewHolder> extends Recy
     }
 
 
-    private SmartDiffCallBack<T> smartDiffCallBack;
-
-    public void setSmartDiffCallBack(SmartDiffCallBack<T> smartDiffCallBack) {
-        this.smartDiffCallBack = smartDiffCallBack;
-    }
-
     /**
      * change data      *****************************************************************************************************************************************************************
      */
@@ -296,37 +262,6 @@ public abstract class BaseSmartAdapter<T, K extends BaseViewHolder> extends Recy
             mData.addAll(data);
         }
         notifyDataSetChanged();
-    }
-
-    /**
-     * DiffUtils 刷新数据
-     *
-     * @param newData 新数据
-     */
-    public void refreshData(final List<T> newData) {
-        if (smartDiffCallBack == null) {
-            throw new RuntimeException("callback must be created before refresh data");
-        }
-        Observable.create(new ObservableOnSubscribe<DiffUtil.DiffResult>() {
-            @Override
-            public void subscribe(ObservableEmitter<DiffUtil.DiffResult> e) throws Exception {
-                BaseCallBack callBack = new BaseCallBack(mData, newData, smartDiffCallBack);
-                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callBack, true);
-                e.onNext(diffResult);
-            }
-        }).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<DiffUtil.DiffResult>() {
-            @Override
-            public void accept(DiffUtil.DiffResult diffResult) throws Exception {
-                diffResult.dispatchUpdatesTo(BaseSmartAdapter.this);
-                mData = newData;
-
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                replaceData(newData);
-            }
-        });
     }
 
 

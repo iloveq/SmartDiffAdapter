@@ -2,13 +2,13 @@ package com.woaiqw.happy.smartdiffadapter;
 
 import android.os.Bundle;
 
-import com.woaiqw.adapter.BaseSmartAdapter;
+import com.woaiqw.adapter.BaseSmartDiffAdapter;
 
 /**
  * Created by haoran on 2018/5/3.
  */
 
-public class MainAdapter extends BaseSmartAdapter<Student, MainViewHolder> {
+public class MainAdapter extends BaseSmartDiffAdapter<Student, MainViewHolder> {
 
 
     public MainAdapter(int mLayoutResId) {
