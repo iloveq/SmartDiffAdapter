@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.woaiqw.adapter.diff.SmartDiffCallBack;
@@ -110,9 +111,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             studentsNew.add(student);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
+            Log.d(MainActivity.class.getSimpleName(),e.toString());
         }
         adapter.refreshData(studentsNew);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        adapter.release();
+    }
 }
