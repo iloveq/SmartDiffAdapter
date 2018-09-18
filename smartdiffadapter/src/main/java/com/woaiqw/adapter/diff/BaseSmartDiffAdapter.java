@@ -1,7 +1,10 @@
-package com.woaiqw.adapter;
+package com.woaiqw.adapter.diff;
 
 import android.os.Bundle;
 import android.support.v7.util.DiffUtil;
+
+import com.woaiqw.adapter.holder.BaseViewHolder;
+import com.woaiqw.adapter.base.BaseSmartAdapter;
 
 import java.util.List;
 
@@ -9,6 +12,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -67,7 +71,7 @@ public abstract class BaseSmartDiffAdapter<T, K extends BaseViewHolder> extends 
         if (smartDiffCallBack == null) {
             throw new RuntimeException("callback must be created before refresh data");
         }
-        Observable.create(new ObservableOnSubscribe<DiffUtil.DiffResult>() {
+        Disposable disposable = Observable.create(new ObservableOnSubscribe<DiffUtil.DiffResult>() {
             @Override
             public void subscribe(ObservableEmitter<DiffUtil.DiffResult> e) throws Exception {
                 BaseCallBack callBack = new BaseCallBack(mData, newData, smartDiffCallBack);
@@ -87,6 +91,7 @@ public abstract class BaseSmartDiffAdapter<T, K extends BaseViewHolder> extends 
                 replaceData(newData);
             }
         });
+        disposable.dispose();
     }
 
 

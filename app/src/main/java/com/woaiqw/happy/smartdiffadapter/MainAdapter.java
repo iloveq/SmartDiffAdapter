@@ -2,7 +2,7 @@ package com.woaiqw.happy.smartdiffadapter;
 
 import android.os.Bundle;
 
-import com.woaiqw.adapter.BaseSmartDiffAdapter;
+import com.woaiqw.adapter.diff.BaseSmartDiffAdapter;
 
 /**
  * Created by haoran on 2018/5/3.

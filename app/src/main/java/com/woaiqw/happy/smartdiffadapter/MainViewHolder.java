@@ -3,7 +3,7 @@ package com.woaiqw.happy.smartdiffadapter;
 import android.view.View;
 import android.widget.TextView;
 
-import com.woaiqw.adapter.BaseViewHolder;
+import com.woaiqw.adapter.holder.BaseViewHolder;
 
 /**
  * Created by haoran on 2018/5/3.
