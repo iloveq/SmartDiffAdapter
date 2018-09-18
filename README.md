@@ -121,6 +121,14 @@ use:
         });
         rv.setAdapter(adapter);
         ....
-        //the main
+        // the main
         adapter.refreshData(studentsNew);
+
+
+    // release
+    @Override
+     protected void onDestroy() {
+         super.onDestroy();
+         adapter.release();
+     }
 ```
