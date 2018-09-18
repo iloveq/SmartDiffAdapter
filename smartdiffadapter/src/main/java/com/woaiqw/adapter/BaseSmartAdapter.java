@@ -240,6 +240,13 @@ public abstract class BaseSmartAdapter<T, K extends BaseViewHolder> extends Recy
      * add one new data
      */
 
+    private void compatibilityDataSizeChanged(int size) {
+        final int dataSize = mData == null ? 0 : mData.size();
+        if (dataSize == size) {
+            notifyDataSetChanged();
+        }
+    }
+
     public void setNewData(@Nullable List<T> data) {
         this.mData = data == null ? new ArrayList<T>() : data;
         notifyDataSetChanged();
@@ -248,11 +255,33 @@ public abstract class BaseSmartAdapter<T, K extends BaseViewHolder> extends Recy
     public void addData(@NonNull T data) {
         mData.add(data);
         notifyItemInserted(mData.size());
+        compatibilityDataSizeChanged(1);
+    }
+
+    public void addData(@IntRange(from = 0) int position, @NonNull T data) {
+        mData.add(position, data);
+        notifyItemInserted(position);
+        compatibilityDataSizeChanged(1);
     }
 
     public void addData(@IntRange(from = 0) int position, @NonNull Collection<? extends T> newData) {
         mData.addAll(position, newData);
         notifyItemRangeInserted(position, newData.size());
+        compatibilityDataSizeChanged(newData.size());
+    }
+
+
+    public void addData(@NonNull Collection<? extends T> newData) {
+        mData.addAll(newData);
+        notifyItemRangeInserted(mData.size() - newData.size(), newData.size());
+        compatibilityDataSizeChanged(newData.size());
+    }
+
+    public void remove(@IntRange(from = 0) int position) {
+        mData.remove(position);
+        notifyItemRemoved(position);
+        compatibilityDataSizeChanged(0);
+        notifyItemRangeChanged(position, mData.size() - position);
     }
 
     // 不是同一个引用才清空列表
@@ -262,6 +291,12 @@ public abstract class BaseSmartAdapter<T, K extends BaseViewHolder> extends Recy
             mData.addAll(data);
         }
         notifyDataSetChanged();
+    }
+
+
+    @NonNull
+    public List<T> getData() {
+        return mData;
     }
 
 
