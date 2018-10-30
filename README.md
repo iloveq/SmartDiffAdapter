@@ -5,6 +5,7 @@ use DiffUtils in android.support.v7.util
     to 
     smart refresh data
     and so on 
+##### 最近更新：
 this work will be update to build project simplily
 ```
 allprojects {
@@ -17,7 +18,7 @@ allprojects {
  Step 2. Add the dependency
 ```
 dependencies {
-	        implementation 'com.github.woaigmz:SmartDiffAdapter:0.2.0'
+	        implementation 'com.github.woaigmz:SmartDiffAdapter:0.3.1'
 	}
 ```
 just like this 👇
