@@ -20,6 +20,11 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.woaiqw.adapter.base.BaseSmartAdapter;
+
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+
 /**
  * Created by haoran on 2018/5/3.
  */
@@ -28,11 +33,15 @@ public class BaseViewHolder extends RecyclerView.ViewHolder implements IHolder {
 
     private final SparseArray<View> views;
     private View mItemView;
-
+    private final LinkedHashSet<Integer> childClickViewIds;
+    private final LinkedHashSet<Integer> itemChildLongClickViewIds;
+    private BaseSmartAdapter adapter;
 
     public BaseViewHolder(View itemView) {
         super(itemView);
         this.views = new SparseArray<>();
+        this.childClickViewIds = new LinkedHashSet<>();
+        this.itemChildLongClickViewIds = new LinkedHashSet<>();
         this.mItemView = itemView;
         this.mItemView.setTag(this);
     }
@@ -46,6 +55,14 @@ public class BaseViewHolder extends RecyclerView.ViewHolder implements IHolder {
     public View getItemView() {
         if (mItemView == null) throw new RuntimeException("item has been gc");
         return mItemView;
+    }
+
+    public HashSet<Integer> getChildClickViewIds() {
+        return childClickViewIds;
+    }
+
+    public HashSet<Integer> getItemChildLongClickViewIds() {
+        return itemChildLongClickViewIds;
     }
 
     @Override
@@ -255,6 +272,48 @@ public class BaseViewHolder extends RecyclerView.ViewHolder implements IHolder {
         RatingBar view = getView(viewId);
         view.setMax(max);
         view.setRating(rating);
+        return this;
+    }
+
+    public BaseViewHolder addOnClickListener(@IdRes final int viewId) {
+        childClickViewIds.add(viewId);
+        final View view = getView(viewId);
+        if (view != null) {
+            if (!view.isClickable()) {
+                view.setClickable(true);
+            }
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (adapter.getOnItemChildClickListener() != null) {
+                        adapter.getOnItemChildClickListener().onItemChildClick(adapter, v, getClickPosition());
+                    }
+                }
+            });
+        }
+
+        return this;
+    }
+
+    private int getClickPosition() {
+        return getLayoutPosition();
+    }
+
+    public BaseViewHolder addOnLongClickListener(@IdRes final int viewId) {
+        itemChildLongClickViewIds.add(viewId);
+        final View view = getView(viewId);
+        if (view != null) {
+            if (!view.isLongClickable()) {
+                view.setLongClickable(true);
+            }
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return adapter.getOnItemChildLongClickListener() != null &&
+                            adapter.getOnItemChildLongClickListener().onItemChildLongClick(adapter, v, getClickPosition());
+                }
+            });
+        }
         return this;
     }
 
