@@ -14,6 +14,7 @@ import android.text.util.Linkify;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -314,6 +315,12 @@ public class BaseViewHolder extends RecyclerView.ViewHolder implements IHolder {
                 }
             });
         }
+        return this;
+    }
+
+
+    public BaseViewHolder setAdapter(BaseSmartAdapter adapter) {
+        this.adapter = adapter;
         return this;
     }
 

@@ -101,6 +101,7 @@ public abstract class BaseSmartAdapter<T, K extends BaseViewHolder> extends Recy
         this.mLayoutInflater = LayoutInflater.from(parent.getContext());
         baseViewHolder = onCreateDefViewHolder(parent, viewType);
         bindViewClickListener(baseViewHolder);
+        baseViewHolder.setAdapter(this);
         return baseViewHolder;
     }
 
