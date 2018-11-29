@@ -1,6 +1,5 @@
 # SmartDiffAdapter
 use DiffUtils in android.support.v7.util 
-    rxjava2 
     support multitype items
     to 
     smart refresh data
