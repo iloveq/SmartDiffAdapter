@@ -10,6 +10,8 @@ import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.woaiqw.adapter.base.BaseSmartAdapter;
+
 /**
  * Created by haoran on 2018/5/3.
  */
@@ -78,5 +80,10 @@ public interface IHolder {
 
     IHolder setRating(@IdRes int viewId, float rating, int max);
 
+    IHolder setAdapter(BaseSmartAdapter adapter);
+
+    IHolder addOnLongClickListener(@IdRes final int viewId);
+
+    IHolder addOnClickListener(@IdRes final int viewId);
 
 }

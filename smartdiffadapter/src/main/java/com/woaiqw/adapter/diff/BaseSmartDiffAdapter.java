@@ -1,5 +1,6 @@
 package com.woaiqw.adapter.diff;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.util.DiffUtil;
 
@@ -8,15 +9,6 @@ import com.woaiqw.adapter.holder.BaseViewHolder;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-
 /**
  * Created by haoran on 2018/5/3.
  */
@@ -24,27 +16,17 @@ import io.reactivex.schedulers.Schedulers;
 public abstract class BaseSmartDiffAdapter<T, K extends BaseViewHolder> extends BaseSmartAdapter<T, K> {
 
 
-    private Disposable disposable;
-    private CompositeDisposable manager;
-
-    private void initManager() {
-        manager = new CompositeDisposable();
-    }
-
     public BaseSmartDiffAdapter(int layoutResId, List<T> mData) {
         super(layoutResId, mData);
-        initManager();
     }
 
 
     public BaseSmartDiffAdapter(int mLayoutResId) {
         super(mLayoutResId);
-        initManager();
     }
 
     public BaseSmartDiffAdapter(List<T> mData) {
         super(mData);
-        initManager();
     }
 
     /**
@@ -83,39 +65,47 @@ public abstract class BaseSmartDiffAdapter<T, K extends BaseViewHolder> extends 
         if (smartDiffCallBack == null) {
             throw new RuntimeException("callback must be created before refresh data");
         }
-        disposable = Observable.create(new ObservableOnSubscribe<DiffUtil.DiffResult>() {
-            @Override
-            public void subscribe(ObservableEmitter<DiffUtil.DiffResult> e) {
-                BaseCallBack callBack = new BaseCallBack(mData, newData, smartDiffCallBack);
-                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callBack, true);
-                e.onNext(diffResult);
-            }
-        }).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<DiffUtil.DiffResult>() {
-            @Override
-            public void accept(DiffUtil.DiffResult diffResult) {
-                diffResult.dispatchUpdatesTo(BaseSmartDiffAdapter.this);
-                mData = newData;
+        MyTask<T, K> task = new MyTask(this, smartDiffCallBack);
+        task.execute(mData, newData);
 
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) {
-                replaceData(newData);
-            }
-        });
-        if (manager != null) {
-            manager.add(disposable);
-        }
-    }
-
-    public void release() {
-        if (manager == null) {
-            return;
-        }
-        if (manager.isDisposed()) {
-            manager.dispose();
-        }
     }
 
 
+    static class MyTask<T, K extends BaseViewHolder> extends AsyncTask<List<T>, Void, DiffUtil.DiffResult> {
+
+        private SmartDiffCallBack<T> smartDiffCallBack;
+        private BaseSmartDiffAdapter<T, K> adapter;
+        private List<T> newData;
+
+        MyTask(BaseSmartDiffAdapter<T, K> adapter, SmartDiffCallBack<T> smartDiffCallBack) {
+            this.adapter = adapter;
+            this.smartDiffCallBack = smartDiffCallBack;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @SafeVarargs
+        @Override
+        protected final DiffUtil.DiffResult doInBackground(List<T>... lists) {
+            List<T> mData = lists[0];
+            newData = lists[1];
+            DiffUtil.DiffResult result;
+            BaseCallBack callBack = new BaseCallBack(mData, newData, smartDiffCallBack);
+            result = DiffUtil.calculateDiff(callBack, true);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(DiffUtil.DiffResult result) {
+            super.onPostExecute(result);
+            result.dispatchUpdatesTo(adapter);
+            adapter.replaceData(newData);
+        }
+    }
 }
+
+
+

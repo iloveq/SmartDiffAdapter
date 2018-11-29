@@ -14,7 +14,6 @@ import android.text.util.Linkify;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -276,6 +275,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder implements IHolder {
         return this;
     }
 
+    @Override
     public BaseViewHolder addOnClickListener(@IdRes final int viewId) {
         childClickViewIds.add(viewId);
         final View view = getView(viewId);
@@ -287,7 +287,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder implements IHolder {
                 @Override
                 public void onClick(View v) {
                     if (adapter.getOnItemChildClickListener() != null) {
-                        adapter.getOnItemChildClickListener().onItemChildClick(adapter, v, getClickPosition());
+                        adapter.getOnItemChildClickListener().onItemChildClick(adapter, v, getLayoutPosition());
                     }
                 }
             });
@@ -296,10 +296,8 @@ public class BaseViewHolder extends RecyclerView.ViewHolder implements IHolder {
         return this;
     }
 
-    private int getClickPosition() {
-        return getLayoutPosition();
-    }
 
+    @Override
     public BaseViewHolder addOnLongClickListener(@IdRes final int viewId) {
         itemChildLongClickViewIds.add(viewId);
         final View view = getView(viewId);
@@ -311,14 +309,14 @@ public class BaseViewHolder extends RecyclerView.ViewHolder implements IHolder {
                 @Override
                 public boolean onLongClick(View v) {
                     return adapter.getOnItemChildLongClickListener() != null &&
-                            adapter.getOnItemChildLongClickListener().onItemChildLongClick(adapter, v, getClickPosition());
+                            adapter.getOnItemChildLongClickListener().onItemChildLongClick(adapter, v, getLayoutPosition());
                 }
             });
         }
         return this;
     }
 
-
+    @Override
     public BaseViewHolder setAdapter(BaseSmartAdapter adapter) {
         this.adapter = adapter;
         return this;
