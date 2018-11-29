@@ -17,7 +17,7 @@ allprojects {
  Step 2. Add the dependency
 ```
 dependencies {
-	        implementation 'com.github.woaigmz:SmartDiffAdapter:0.3.1'
+	        implementation 'com.github.woaigmz:SmartDiffAdapter:0.3.4'
 	}
 ```
 just like this 👇
